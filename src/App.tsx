@@ -25,7 +25,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "zelda3-installer.sh";
+    a.download = "zelda3-manager.sh";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -41,7 +41,7 @@ export default function App() {
               <Terminal size={28} />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900">
-              Zelda 3 Universal Linux Installer
+              Zelda 3 Linux & Steam Deck Manager
             </h1>
           </div>
           <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
@@ -51,7 +51,7 @@ export default function App() {
 
         <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 bg-slate-900 text-slate-300 border-b border-slate-800">
-            <span className="font-mono text-sm">zelda3-installer.sh</span>
+            <span className="font-mono text-sm">zelda3-manager.sh</span>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopy}

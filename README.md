@@ -2,6 +2,10 @@
 
 An all-in-one graphical installer, build toolchain, and interactive configuration manager for the [snesrev/zelda3](https://github.com/snesrev/zelda3) PC port of *The Legend of Zelda: A Link to the Past* on **Linux** and **Steam Deck (SteamOS)**.
 
+> [!NOTE]
+> **🤖 AI-Crafted Disclaimer:**
+> This script was generated with the assistance of **Google Gemini AI**. While it was forged with great care (and plenty of digital fairies in bottles), please note that any unintended glitches, rogue Cuccos, or unexpected desktop hijinks are entirely unintentional. Use responsibly, back up your saves, and remember: *it's dangerous to go alone—take a terminal backup!* 🛡️🗡️
+
 ---
 
 ## ⚡ Quick Start
@@ -10,7 +14,7 @@ Open your terminal (or Konsole in Steam Deck Desktop Mode) and run:
 
 ```bash
 # Download the script
-curl -sSL https://raw.githubusercontent.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPOSITORY_NAME>/main/zelda3-manager.sh -o zelda3-manager.sh
+curl -sSL https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh -o zelda3-manager.sh
 
 # Make it executable
 chmod +x zelda3-manager.sh
@@ -19,7 +23,10 @@ chmod +x zelda3-manager.sh
 ./zelda3-manager.sh
 ```
 
-*(Replace `<YOUR_GITHUB_USERNAME>` and `<YOUR_REPOSITORY_NAME>` with your repository details once published to GitHub).*
+Or run directly without saving first:
+```bash
+bash <(curl -sSL https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh)
+```
 
 ---
 
@@ -102,6 +109,12 @@ npm install
 npm run dev
 ```
 Open `http://localhost:3000` in your browser.
+
+---
+
+## 💡 Why I Made This
+
+> *"I love A Link to the Past and was thrilled to play the native PC port on my Steam Deck and Linux PC. However, I found that actually getting it installed on my Steam Deck wasn't as straightforward as other decomp projects are. I've done a lot of messing around with AI(and at this point, who hasn't?) so I figured I could use it to help me install it. I was able to, but then realized there may be other people that want to be able to install it and do all the various tweaks as well! So here we are. I wanted a friendly, visual setup tool that handles everything from asset extraction to widescreen and QoL toggles with a few clicks. I hope it saves fellow adventurers some time!"*
 
 ---
 
