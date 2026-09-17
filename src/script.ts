@@ -833,7 +833,7 @@ run_install() {
             cp "$0" "$install_dir/zelda3-manager.sh"
         else
             echo "Installing Zelda 3 Manager..."
-            curl -sSL "https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh" -o "$install_dir/zelda3-manager.sh"
+            curl -sSL "https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh?t=$(date +%s)" -o "$install_dir/zelda3-manager.sh"
         fi
 
         chmod 755 "$install_dir/zelda3-manager.sh"
