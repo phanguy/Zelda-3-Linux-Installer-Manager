@@ -39,16 +39,16 @@ You can re-open the configuration hub anytime to tweak graphics, sound, or gamep
 
 ## 📸 Screenshots
 
-*(Drop your screenshot image files into your repo, e.g. in a `screenshots/` folder, or paste image URLs below)*
-
+### KDE Plasma (Steam Deck / KDialog)
 <p align="center">
-  <img src="screenshots/main_menu.png" alt="Main Configuration Hub" width="48%" />
-  <img src="screenshots/qol_tweaks.png" alt="Gameplay Tweaks & QoL Checklist" width="48%" />
+  <img src="screenshots/KDEHub.png" alt="KDE Manager Hub" width="48%" />
+  <img src="screenshots/KDETweaks.png" alt="KDE Gameplay Tweaks" width="48%" />
 </p>
 
+### GNOME / Others (Zenity)
 <p align="center">
-  <img src="screenshots/display_settings.png" alt="Display & Aspect Ratio Settings" width="48%" />
-  <img src="screenshots/steamdeck_gameplay.png" alt="16:10 Widescreen on Steam Deck" width="48%" />
+  <img src="screenshots/ZenityHub.jpeg" alt="Zenity Manager Hub" width="48%" />
+  <img src="screenshots/ZenityTweaks.png" alt="Zenity Gameplay Tweaks" width="48%" />
 </p>
 
 ---
