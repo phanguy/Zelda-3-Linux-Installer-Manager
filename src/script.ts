@@ -826,14 +826,18 @@ run_install() {
         rm -rf "$install_dir/src"
         rm -f "$install_dir/build.sh"
 
-        # Ensure zelda-manager.sh is a valid full script
+        # Ensure zelda3-manager.sh is installed and self-contained
         if [ -s "$0" ] && [ "$0" != "/dev/fd/"* ] && [ "$0" != "bash" ]; then
-            cp "$0" "$install_dir/zelda-manager.sh"
+            cp "$0" "$install_dir/zelda3-manager.sh"
         else
-            echo "Fetching standalone manager tool..."
-            curl -sSL "https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh" -o "$install_dir/zelda-manager.sh" 2>/dev/null || true
+            echo "Writing standalone Zelda 3 Manager..."
+            curl -sSL "https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh" -o "$install_dir/zelda3-manager.sh" 2>/dev/null || true
         fi
-        chmod +x "$install_dir/zelda-manager.sh"
+        
+        # In case curl was blocked or offline, ensure we have an executable file
+        chmod +x "$install_dir/zelda3-manager.sh" 2>/dev/null || true
+        ln -sf "$install_dir/zelda3-manager.sh" "$install_dir/zelda-manager.sh" 2>/dev/null || true
+        chmod +x "$install_dir/zelda-manager.sh" 2>/dev/null || true
 
         # Create launcher wrapper so zelda3 can be launched from any working directory
         cat << 'LAUNCHER' > "$install_dir/run-zelda3.sh"
@@ -851,7 +855,7 @@ LAUNCHER
         local manager_entry="[Desktop Entry]
 Name=Zelda 3 Manager
 Comment=Configure Zelda 3 settings, tweaks, and backups
-Exec=/bin/bash \"$install_dir/zelda-manager.sh\" --manage \"$install_dir\"
+Exec=/bin/bash \"$install_dir/zelda3-manager.sh\" --manage \"$install_dir\"
 Path=$install_dir
 Icon=preferences-desktop
 Terminal=false
