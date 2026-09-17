@@ -855,7 +855,7 @@ LAUNCHER
         local manager_entry="[Desktop Entry]
 Name=Zelda 3 Manager
 Comment=Configure Zelda 3 settings, tweaks, and backups
-Exec=/bin/bash \"$install_dir/zelda3-manager.sh\" --manage \"$install_dir\"
+Exec=$install_dir/zelda3-manager.sh --manage \"$install_dir\"
 Path=$install_dir
 Icon=preferences-desktop
 Terminal=false
@@ -871,7 +871,7 @@ Categories=Settings;Game;"
         local game_entry="[Desktop Entry]
 Name=The Legend of Zelda: A Link to the Past
 Comment=Native PC port of The Legend of Zelda: A Link to the Past
-Exec=\"$install_dir/run-zelda3.sh\"
+Exec=$install_dir/run-zelda3.sh
 Path=$install_dir
 Icon=input-gaming
 Terminal=false
@@ -883,11 +883,18 @@ Categories=Game;"
         echo "$game_entry" > "$HOME/Desktop/Play-Zelda3.desktop"
         chmod +x "$HOME/Desktop/Play-Zelda3.desktop"
 
-        # Mark desktop shortcuts as trusted in GNOME if gio is available
+        # Mark desktop shortcuts as trusted & executable for both GNOME and KDE Plasma
         if command -v gio >/dev/null 2>&1; then
             gio set "$HOME/Desktop/Play-Zelda3.desktop" metadata::trusted true 2>/dev/null || true
             gio set "$HOME/Desktop/Zelda3-Manager.desktop" metadata::trusted true 2>/dev/null || true
         fi
+        # Specific to KDE Plasma on Fedora (kwriteconfig5 / kwriteconfig6)
+        for cfg in kwriteconfig6 kwriteconfig5; do
+            if command -v $cfg >/dev/null 2>&1; then
+                $cfg --file "$HOME/Desktop/Zelda3-Manager.desktop" --group "Desktop Entry" --key "X-KDE-AuthorizeAction" "all" 2>/dev/null || true
+                $cfg --file "$HOME/Desktop/Play-Zelda3.desktop" --group "Desktop Entry" --key "X-KDE-AuthorizeAction" "all" 2>/dev/null || true
+            fi
+        done
         update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
 
         echo -e "\n======================================================="
