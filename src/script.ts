@@ -826,10 +826,23 @@ run_install() {
         rm -rf "$install_dir/src"
         rm -f "$install_dir/build.sh"
 
-        cp "$0" "$install_dir/zelda-manager.sh" 2>/dev/null || cat << 'SELF' > "$install_dir/zelda-manager.sh"
-$(cat "$0" 2>/dev/null)
-SELF
+        # Ensure zelda-manager.sh is a valid full script
+        if [ -s "$0" ] && [ "$0" != "/dev/fd/"* ] && [ "$0" != "bash" ]; then
+            cp "$0" "$install_dir/zelda-manager.sh"
+        else
+            echo "Fetching standalone manager tool..."
+            curl -sSL "https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh" -o "$install_dir/zelda-manager.sh" 2>/dev/null || true
+        fi
         chmod +x "$install_dir/zelda-manager.sh"
+
+        # Create launcher wrapper so zelda3 can be launched from any working directory
+        cat << 'LAUNCHER' > "$install_dir/run-zelda3.sh"
+#!/bin/bash
+DIR="$(cd "$(dirname "\$0")" && pwd)"
+cd "$DIR"
+exec "./zelda3" "$@"
+LAUNCHER
+        chmod +x "$install_dir/run-zelda3.sh"
 
         mkdir -p "$HOME/Desktop"
         mkdir -p "$HOME/.local/share/applications"
@@ -837,7 +850,8 @@ SELF
         # 1. Create Zelda 3 Manager desktop shortcuts
         local manager_entry="[Desktop Entry]
 Name=Zelda 3 Manager
-Exec=\"/bin/bash\" \"$install_dir/zelda-manager.sh\" --manage \"$install_dir\"
+Comment=Configure Zelda 3 settings, tweaks, and backups
+Exec=/bin/bash \"$install_dir/zelda-manager.sh\" --manage \"$install_dir\"
 Path=$install_dir
 Icon=preferences-desktop
 Terminal=false
@@ -852,7 +866,8 @@ Categories=Settings;Game;"
         # 2. Always create Zelda 3 game launcher shortcuts
         local game_entry="[Desktop Entry]
 Name=The Legend of Zelda: A Link to the Past
-Exec=\"$install_dir/zelda3\"
+Comment=Native PC port of The Legend of Zelda: A Link to the Past
+Exec=\"$install_dir/run-zelda3.sh\"
 Path=$install_dir
 Icon=input-gaming
 Terminal=false
@@ -905,9 +920,25 @@ Categories=Game;"
 # 3. ROOT LAUNCH LOGIC
 # ==============================================================================
 
-if [ "$1" == "--manage" ] && [ -n "$2" ]; then
-    INSTALL_DIR="$2"
-    
+SCRIPT_DIR="$(cd "$(dirname "$0" 2>/dev/null)" 2>/dev/null && pwd)"
+
+if [ "$1" = "--manage" ]; then
+    if [ -n "$2" ]; then
+        INSTALL_DIR="$2"
+    elif [ -f "$SCRIPT_DIR/zelda3.ini" ]; then
+        INSTALL_DIR="$SCRIPT_DIR"
+    else
+        INSTALL_DIR=$(gui_getexistingdirectory "$HOME" "Select the Zelda3 installation folder to manage:")
+        if [ $? -ne 0 ] || [ -z "$INSTALL_DIR" ]; then
+            exit 0
+        fi
+    fi
+elif [ -f "$SCRIPT_DIR/zelda3.ini" ] && [ -f "$SCRIPT_DIR/zelda3_assets.dat" ]; then
+    # When launched directly from inside the game folder (e.g. clicking zelda-manager.sh in file manager)
+    INSTALL_DIR="$SCRIPT_DIR"
+fi
+
+if [ -n "$INSTALL_DIR" ]; then
     while true; do
         CHOICE=$(gui_menu "ZELDA 3 MANAGER HUB\n\nTarget Game Directory:\n$INSTALL_DIR\n\nSelect an option below:" "Zelda 3 Manager Hub" \
             "settings"  "⚙️ Configure Game Settings & Tweaks" \

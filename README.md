@@ -8,43 +8,78 @@ An all-in-one graphical installer, build toolchain, and interactive configuratio
 
 ---
 
-## ⚡ Quick Start
+## ⚡ Quick Start & Usage
 
-Open your terminal (or Konsole in Steam Deck Desktop Mode) and run:
+Open your terminal (or **Konsole** in Steam Deck Desktop Mode) and run:
 
 ```bash
-# Download the script
+# 1. Download the script
 curl -sSL https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh -o zelda3-manager.sh
 
-# Make it executable
+# 2. Make it executable
 chmod +x zelda3-manager.sh
 
-# Run the manager
+# 3. Launch the manager
 ./zelda3-manager.sh
 ```
 
-Or run directly without saving first:
+Or run it directly in one step without saving:
 ```bash
 bash <(curl -sSL https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh)
 ```
+
+### Managing an Existing Installation
+You can re-open the configuration hub anytime to tweak graphics, sound, or gameplay:
+```bash
+./zelda3-manager.sh --manage ~/zelda3
+```
+*(Replace `~/zelda3` if you chose a custom folder during setup).*
+
+---
+
+## 📸 Screenshots
+
+*(Drop your screenshot image files into your repo, e.g. in a `screenshots/` folder, or paste image URLs below)*
+
+<p align="center">
+  <img src="screenshots/main_menu.png" alt="Main Configuration Hub" width="48%" />
+  <img src="screenshots/qol_tweaks.png" alt="Gameplay Tweaks & QoL Checklist" width="48%" />
+</p>
+
+<p align="center">
+  <img src="screenshots/display_settings.png" alt="Display & Aspect Ratio Settings" width="48%" />
+  <img src="screenshots/steamdeck_gameplay.png" alt="16:10 Widescreen on Steam Deck" width="48%" />
+</p>
+
+---
+
+## 📋 Prerequisites & Requirements
+
+- **Linux Operating System:**
+  - **SteamOS / Steam Deck:** Supported out of the box in Desktop Mode (uses pre-installed `kdialog`).
+  - **Ubuntu / Debian / Linux Mint / Pop!_OS:** Uses `zenity` (pre-installed, or `sudo apt install zenity`).
+  - **Arch Linux / Fedora / Other:** Works with either `zenity` or `kdialog`.
+- **A Legal ROM:**
+  - A clean, unheadered **US 1.0 SNES ROM** (`.sfc`).
+  - Expected SHA-256 Hash:  
+    `66871d66be19ad2c34c927d6b14cd8eb6fc3181965b6e517cb361f7316009cfb`
 
 ---
 
 ## ✨ Features
 
 - **Seamless GUI on Any Desktop:**
-  - Automatic detection of **KDialog** (SteamOS / KDE Plasma) or **Zenity** (Ubuntu, Debian, Pop!_OS, GNOME, XFCE).
-  - Clean, unified dialogs and native file choosers on all supported desktops.
+  - Automatically detects and uses **KDialog** (SteamOS / KDE Plasma) or **Zenity** (GNOME, Cinnamon, XFCE).
 - **Automated Toolchain & Asset Extraction:**
-  - Validates all system build dependencies (`gcc`, `g++`, `make`, `SDL2`, `libpng`, `git`, `python3`).
-  - Native file picker to browse for your legally dumped Japanese or US SNES ROM (`.sfc` / `.smc`).
-  - Automatic ROM asset extraction and compilation of the native 64-bit binary.
+  - Checks and validates required build dependencies (`gcc`, `g++`, `make`, `SDL2`, `libpng`, `git`, `python3`).
+  - Native file dialog to select your ROM file.
+  - Automatic SHA-256 hash verification, ROM asset extraction, and compilation of the native 64-bit binary.
 - **Interactive Configuration & Tweaks Manager (`zelda3.ini`):**
   - **📺 Display & Graphics:**
     - Aspect Ratio: **16:10** (native Steam Deck fill without black bars), **16:9** (standard monitors/TVs), **4:3** (retro 1991 vanilla), or **18:9**.
-    - Display Mode: Toggle Fullscreen / Windowed.
+    - Display Mode: Fullscreen / Windowed toggle.
     - Window Scale: 1x, 2x, 3x (1080p), or 4x (1440p/4K).
-    - Pixel Filtering: Toggle Crisp (Nearest-neighbor) or Smooth (Bilinear).
+    - Pixel Filtering: Crisp (Nearest-neighbor) vs Smooth (Bilinear).
     - Dim Flashes: Photosensitivity safety guard.
   - **🎮 Gameplay & Quality of Life Tweaks:**
     - Live checklist of 12 enhancements including:
@@ -68,47 +103,6 @@ bash <(curl -sSL https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Install
     - Built-in installer for MSU-1 audio packs: point to any `.zip`, `.7z`, `.tar.gz` archive or folder of `.pcm` files for automatic extraction.
   - **🎮 Steam Deck Integration:**
     - Step-by-step guidance to add the compiled binary as a non-Steam game for full Game Mode support and cloud saves.
-
----
-
-## 📋 System Requirements
-
-- **Linux Distribution:**
-  - **SteamOS / Steam Deck:** Fully supported out of the box in Desktop Mode (uses pre-installed `kdialog`).
-  - **Ubuntu / Debian / Linux Mint / Pop!_OS:** Pre-installed `zenity` (or `sudo apt install zenity`).
-  - **Arch Linux / Manjaro / Fedora:** Works with either `zenity` or `kdialog`.
-- **A Legal ROM:**
-  - A clean Japanese (`Zelda no Densetsu - Kamigami no Triforce`) or US 1.0 SNES ROM dump.
-
----
-
-## 🛠️ Usage
-
-### 1. Fresh Installation
-Run the script without arguments:
-```bash
-./zelda3-manager.sh
-```
-Follow the graphical prompts to choose an install directory (default: `~/zelda3`), select your ROM, compile, and configure settings.
-
-### 2. Managing an Existing Installation
-You can re-open the configuration hub at any time to tweak graphics, sound, or gameplay:
-```bash
-./zelda3-manager.sh --manage ~/zelda3
-```
-
----
-
-## 🌐 Local Web Preview & Generator
-
-This repository also includes a modern React web app built with Vite and Tailwind CSS. The web app lets you preview the script, inspect features, copy installation commands, or download the latest version of `zelda3-manager.sh` directly from a browser.
-
-To run the web preview locally:
-```bash
-npm install
-npm run dev
-```
-Open `http://localhost:3000` in your browser.
 
 ---
 
