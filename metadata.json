@@ -1,0 +1,8 @@
+{
+  "name": "Zelda 3 Linux Installer Hub",
+  "description": "Universal Linux bash installer and graphical manager utility for the Zelda 3 PC port.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
