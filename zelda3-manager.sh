@@ -867,52 +867,79 @@ It might look like it's frozen for 2-3 minutes. Just let it run in the backgroun
 
     if build_game "$install_dir"; then
         cd "$install_dir"
+        # Clean up source to leave only runtime binaries and game data
         rm -rf "$install_dir/src"
         rm -f "$install_dir/build.sh"
+        rm -f "$install_dir/zelda-manager.sh"
 
-        cp "$0" "$install_dir/zelda-manager.sh" 2>/dev/null || cat << 'SELF' > "$install_dir/zelda-manager.sh"
-$(cat "$0" 2>/dev/null)
-SELF
-        chmod +x "$install_dir/zelda-manager.sh"
+        # Save the current full script as the standalone zelda3-manager.sh
+        if [ -s "$0" ] && [ "$0" != "bash" ] && [[ "$0" != /dev/fd/* ]] && [[ "$0" != /proc/* ]]; then
+            cp "$0" "$install_dir/zelda3-manager.sh"
+        else
+            echo "Installing Zelda 3 Manager..."
+            curl -sSL "https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Installer-Manager/main/zelda3-manager.sh?t=$(date +%s)" -o "$install_dir/zelda3-manager.sh"
+        fi
+
+        chmod 755 "$install_dir/zelda3-manager.sh"
+
+        # Create launcher wrapper so zelda3 can be launched from any working directory
+        cat << 'LAUNCHER' > "$install_dir/run-zelda3.sh"
+#!/bin/bash
+DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$DIR"
+exec "./zelda3" "$@"
+LAUNCHER
+        chmod 755 "$install_dir/run-zelda3.sh"
 
         mkdir -p "$HOME/Desktop"
         mkdir -p "$HOME/.local/share/applications"
         
         # 1. Create Zelda 3 Manager desktop shortcuts
         local manager_entry="[Desktop Entry]
+Type=Application
 Name=Zelda 3 Manager
-Exec="/bin/bash" "$install_dir/zelda-manager.sh" --manage "$install_dir"
+Comment=Configure Zelda 3 settings, tweaks, and backups
+Exec=/bin/bash $install_dir/zelda3-manager.sh --manage $install_dir
 Path=$install_dir
 Icon=preferences-desktop
 Terminal=false
-Type=Application
-Categories=Settings;Game;"
+Categories=Settings;Game;
+StartupNotify=true"
 
         echo "$manager_entry" > "$HOME/Desktop/Zelda3-Manager.desktop"
-        chmod +x "$HOME/Desktop/Zelda3-Manager.desktop"
+        chmod 755 "$HOME/Desktop/Zelda3-Manager.desktop"
         echo "$manager_entry" > "$HOME/.local/share/applications/zelda3-manager.desktop"
-        chmod +x "$HOME/.local/share/applications/zelda3-manager.desktop"
+        chmod 755 "$HOME/.local/share/applications/zelda3-manager.desktop"
 
         # 2. Always create Zelda 3 game launcher shortcuts
         local game_entry="[Desktop Entry]
+Type=Application
 Name=The Legend of Zelda: A Link to the Past
-Exec="$install_dir/zelda3"
+Comment=Native PC port of The Legend of Zelda: A Link to the Past
+Exec=$install_dir/run-zelda3.sh
 Path=$install_dir
 Icon=input-gaming
 Terminal=false
-Type=Application
-Categories=Game;"
+Categories=Game;
+StartupNotify=true"
         
         echo "$game_entry" > "$HOME/.local/share/applications/zelda3.desktop"
-        chmod +x "$HOME/.local/share/applications/zelda3.desktop"
+        chmod 755 "$HOME/.local/share/applications/zelda3.desktop"
         echo "$game_entry" > "$HOME/Desktop/Play-Zelda3.desktop"
-        chmod +x "$HOME/Desktop/Play-Zelda3.desktop"
+        chmod 755 "$HOME/Desktop/Play-Zelda3.desktop"
 
-        # Mark desktop shortcuts as trusted in GNOME if gio is available
+        # Mark desktop shortcuts as trusted & executable for both GNOME and KDE Plasma
         if command -v gio >/dev/null 2>&1; then
             gio set "$HOME/Desktop/Play-Zelda3.desktop" metadata::trusted true 2>/dev/null || true
             gio set "$HOME/Desktop/Zelda3-Manager.desktop" metadata::trusted true 2>/dev/null || true
         fi
+        # Specific to KDE Plasma on Fedora (kwriteconfig5 / kwriteconfig6)
+        for cfg in kwriteconfig6 kwriteconfig5; do
+            if command -v $cfg >/dev/null 2>&1; then
+                $cfg --file "$HOME/Desktop/Zelda3-Manager.desktop" --group "Desktop Entry" --key "X-KDE-AuthorizeAction" "all" 2>/dev/null || true
+                $cfg --file "$HOME/Desktop/Play-Zelda3.desktop" --group "Desktop Entry" --key "X-KDE-AuthorizeAction" "all" 2>/dev/null || true
+            fi
+        done
         update-desktop-database "$HOME/.local/share/applications" 2>/dev/null || true
 
         echo -e "
@@ -963,9 +990,31 @@ The incomplete install folder has been wiped out." "Build Error"
 # 3. ROOT LAUNCH LOGIC
 # ==============================================================================
 
-if [ "$1" == "--manage" ] && [ -n "$2" ]; then
-    INSTALL_DIR="$2"
-    
+SCRIPT_DIR="$(cd "$(dirname "$0" 2>/dev/null)" 2>/dev/null && pwd)"
+SCRIPT_NAME="$(basename "$0" 2>/dev/null)"
+
+if [ "$1" = "--manage" ]; then
+    if [ -n "$2" ] && [ -d "$2" ]; then
+        INSTALL_DIR="$2"
+    elif [ -f "$SCRIPT_DIR/zelda3.ini" ]; then
+        INSTALL_DIR="$SCRIPT_DIR"
+    elif [ -f "$HOME/Desktop/Zelda3/zelda3.ini" ]; then
+        INSTALL_DIR="$HOME/Desktop/Zelda3"
+    else
+        INSTALL_DIR=$(gui_getexistingdirectory "$HOME" "Select the Zelda3 installation folder to manage:")
+        if [ $? -ne 0 ] || [ -z "$INSTALL_DIR" ]; then
+            exit 0
+        fi
+    fi
+elif [ -f "$SCRIPT_DIR/zelda3.ini" ] || [ -f "$SCRIPT_DIR/zelda3" ]; then
+    # When launched directly from inside the game folder (e.g. double-clicking or ./zelda3-manager.sh)
+    INSTALL_DIR="$SCRIPT_DIR"
+elif [ -f "$HOME/Desktop/Zelda3/zelda3.ini" ] && [ "$SCRIPT_NAME" = "zelda3-manager.sh" -o "$SCRIPT_NAME" = "zelda-manager.sh" ]; then
+    # Standalone manager script executed directly
+    INSTALL_DIR="$HOME/Desktop/Zelda3"
+fi
+
+if [ -n "$INSTALL_DIR" ]; then
     while true; do
         CHOICE=$(gui_menu "ZELDA 3 MANAGER HUB
 
