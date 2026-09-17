@@ -823,9 +823,6 @@ run_install() {
 
     if build_game "$install_dir"; then
         cd "$install_dir"
-        rm -rf "$install_dir/src"
-        rm -f "$install_dir/build.sh"
-
         # Clean up source to leave only runtime binaries and game data
         rm -rf "$install_dir/src"
         rm -f "$install_dir/build.sh"
@@ -936,21 +933,27 @@ StartupNotify=true"
 # ==============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "$0" 2>/dev/null)" 2>/dev/null && pwd)"
+SCRIPT_NAME="$(basename "$0" 2>/dev/null)"
 
 if [ "$1" = "--manage" ]; then
-    if [ -n "$2" ]; then
+    if [ -n "$2" ] && [ -d "$2" ]; then
         INSTALL_DIR="$2"
     elif [ -f "$SCRIPT_DIR/zelda3.ini" ]; then
         INSTALL_DIR="$SCRIPT_DIR"
+    elif [ -f "$HOME/Desktop/Zelda3/zelda3.ini" ]; then
+        INSTALL_DIR="$HOME/Desktop/Zelda3"
     else
         INSTALL_DIR=$(gui_getexistingdirectory "$HOME" "Select the Zelda3 installation folder to manage:")
         if [ $? -ne 0 ] || [ -z "$INSTALL_DIR" ]; then
             exit 0
         fi
     fi
-elif [ -f "$SCRIPT_DIR/zelda3.ini" ] && [ -f "$SCRIPT_DIR/zelda3_assets.dat" ]; then
-    # When launched directly from inside the game folder (e.g. clicking zelda-manager.sh in file manager)
+elif [ -f "$SCRIPT_DIR/zelda3.ini" ] || [ -f "$SCRIPT_DIR/zelda3" ]; then
+    # When launched directly from inside the game folder (e.g. double-clicking or ./zelda3-manager.sh)
     INSTALL_DIR="$SCRIPT_DIR"
+elif [ -f "$HOME/Desktop/Zelda3/zelda3.ini" ] && [ "$SCRIPT_NAME" = "zelda3-manager.sh" -o "$SCRIPT_NAME" = "zelda-manager.sh" ]; then
+    # Standalone manager script executed directly
+    INSTALL_DIR="$HOME/Desktop/Zelda3"
 fi
 
 if [ -n "$INSTALL_DIR" ]; then
