@@ -29,11 +29,10 @@ bash <(curl -sSL https://raw.githubusercontent.com/phanguy/Zelda-3-Linux-Install
 ```
 
 ### Managing an Existing Installation
-You can re-open the configuration hub anytime to tweak graphics, sound, or gameplay:
+You can re-open the configuration hub anytime directly by double clicking the desktop shortcut or by commandline to tweak graphics, sound, or gameplay:
 ```bash
 ./zelda3-manager.sh --manage ~/zelda3
 ```
-*(Replace `~/zelda3` if you chose a custom folder during setup).*
 
 ---
 
@@ -49,6 +48,11 @@ You can re-open the configuration hub anytime to tweak graphics, sound, or gamep
 <p align="center">
   <img src="screenshots/ZenityHub.jpeg" alt="Zenity Manager Hub" width="48%" />
   <img src="screenshots/ZenityTweaks.png" alt="Zenity Gameplay Tweaks" width="48%" />
+</p>
+
+### Desktop Integration
+<p align="center">
+  <img src="screenshots/DesktopIcons.png" alt="Automatic Desktop Shortcuts" width="48%" />
 </p>
 
 ---
